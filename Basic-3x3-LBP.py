@@ -11,21 +11,26 @@ def thresholded(center, pixels):
             out.append(0)
     return out
 
+def get_pixel_else_0(l, idx, idy, default=0):
+    try:
+        return l[idx,idy]
+    except IndexError:
+        return default
+
 img = cv2.imread('C:\Users\sam\Downloads\lena.BMP', 0)
 transformed_img = cv2.imread('C:\Users\sam\Downloads\lena.BMP', 0)
 
-
-for x in range(1, len(img) - 1, 1):
-    for y in range(1, len(img[0]) - 1, 1):
+for x in range(0, len(img)):
+    for y in range(0, len(img[0])):
         center        = img[x,y]
-        top_left      = img[x-1, y-1]
-        top_up        = img[x,   y-1]
-        top_right     = img[x+1, y-1]
-        right         = img[x+1, y  ]
-        left          = img[x-1, y  ]
-        bottom_left   = img[x-1, y+1]
-        bottom_right  = img[x+1, y+1]
-        bottom_down   = img[x+1, y  ]
+        top_left      = get_pixel_else_0(img, x-1, y-1)
+        top_up        = get_pixel_else_0(img, x, y-1)
+        top_right     = get_pixel_else_0(img, x+1, y-1)
+        right         = get_pixel_else_0(img, x+1, y )
+        left          = get_pixel_else_0(img, x-1, y )
+        bottom_left   = get_pixel_else_0(img, x-1, y+1)
+        bottom_right  = get_pixel_else_0(img, x+1, y+1)
+        bottom_down   = get_pixel_else_0(img, x+1, y )
 
         values = thresholded(center, [top_left, top_up, top_right,
                                       right, left, bottom_left, bottom_right, bottom_down])
