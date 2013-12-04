@@ -21,18 +21,18 @@ def thresholded(center, pixels):
             out.append(0)
     return out
 
-def get_pixel_else_0(l, idx, idy, default=0):
-    try:
+def get_pixel_else_0(l, idx, idy):
+    if idx < int(len(l)) - 1 and idy < len(l[0]):
         return l[idx,idy]
-    except IndexError:
-        return default
+    else:
+        return 0
 
 
-img = cv2.imread('C:\Users\sam\Downloads\lena.BMP', 0)
-transformed_img = cv2.imread('C:\Users\sam\Downloads\lena.BMP', 0)
+img = cv2.imread('aneesh.jpeg', 0)
+transformed_img = cv2.imread('aneesh.jpeg', 0)
 
-P = 5 # number of pixels
-R = 20 # radius 
+P = 8 # number of pixels
+R = 1 # radius 
 
 for x in range(0, len(img)):
     for y in range(0, len(img[0])):
@@ -40,20 +40,19 @@ for x in range(0, len(img)):
         pixels = []
         for point in range(1, P + 1):
             r = x + R * math.cos(2 * math.pi * point / P)
-            c = y - R * math.cos(2 * math.pi * point / P)
+            c = y - R * math.sin(2 * math.pi * point / P)
             if r < 0 or c < 0:
                 pixels.append(0)
-                continue
-            # XXX: We shouldn't just average if the point lies between just 2 pixels.
+                continue            
             if int(r) == r:
                 if int(c) != c:
                     c1 = int(c)
                     c2 = math.ceil(c)
                     w1 = (c2 - c) / (c2 - c1)
                     w2 = (c - c1) / (c2 - c1)
-                    
-                    pixels.append((w1 * get_pixel_else_0(img, r, int(c), img) + \
-                                   w2 * get_pixel_else_0(img, r, math.ceil(c), img)) / (w1 + w2))
+                                    
+                    pixels.append(int((w1 * get_pixel_else_0(img, int(r), int(c)) + \
+                                   w2 * get_pixel_else_0(img, int(r), math.ceil(c))) / (w1 + w2)))
                 else:
                     pixels.append(get_pixel_else_0(img, int(r), int(c)))
             elif int(c) == c:
@@ -61,8 +60,8 @@ for x in range(0, len(img)):
                 r2 = math.ceil(r)
                 w1 = (r2 - r) / (r2 - r1)
                 w2 = (r - r1) / (r2 - r1)                
-                pixels.append((w1 * get_pixel_else_0(img, int(r), int(c), img) + \
-                               w2 * get_pixel_else_0(img, math.ceil(r), int(c), img)) / (w1 + w2))
+                pixels.append((w1 * get_pixel_else_0(img, int(r), int(c)) + \
+                               w2 * get_pixel_else_0(img, math.ceil(r), int(c))) / (w1 + w2))
             else:
                 pixels.append(bilinear_interpolation(r, c, img))
 
@@ -70,11 +69,26 @@ for x in range(0, len(img)):
         values = thresholded(center, pixels)
         res = 0
         for a in range(0, len(values)):
-            res += values[a] * 255 / P
+            res += values[a] * 2 ** a
 
         transformed_img.itemset((x,y), res)
 
+    print x
+
 cv2.imshow('image', img)
 cv2.imshow('thresholded image', transformed_img)
+
+hist,bins = np.histogram(img.flatten(),256,[0,256])
+
+cdf = hist.cumsum()
+cdf_normalized = cdf * hist.max()/ cdf.max()
+
+plt.plot(cdf_normalized, color = 'b')
+plt.hist(transformed_img.flatten(),256,[0,256], color = 'r')
+plt.xlim([0,256])
+plt.legend(('cdf','histogram'), loc = 'upper left')
+plt.show()
+
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()

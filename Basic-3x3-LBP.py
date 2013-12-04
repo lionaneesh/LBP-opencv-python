@@ -42,7 +42,21 @@ for x in range(0, len(img)):
 
         transformed_img.itemset((x,y), res)
 
+    print x
+
 cv2.imshow('image', img)
 cv2.imshow('thresholded image', transformed_img)
+
+hist,bins = np.histogram(img.flatten(),256,[0,256])
+
+cdf = hist.cumsum()
+cdf_normalized = cdf * hist.max()/ cdf.max()
+
+plt.plot(cdf_normalized, color = 'b')
+plt.hist(transformed_img.flatten(),256,[0,256], color = 'r')
+plt.xlim([0,256])
+plt.legend(('cdf','histogram'), loc = 'upper left')
+plt.show()
+
 cv2.waitKey(0)
 cv2.destroyAllWindows()
