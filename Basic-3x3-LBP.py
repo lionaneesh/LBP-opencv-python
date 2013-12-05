@@ -17,8 +17,8 @@ def get_pixel_else_0(l, idx, idy, default=0):
     except IndexError:
         return default
 
-img = cv2.imread('C:\Users\sam\Downloads\lena.BMP', 0)
-transformed_img = cv2.imread('C:\Users\sam\Downloads\lena.BMP', 0)
+img = cv2.imread('aneesh.jpeg', 0)
+transformed_img = cv2.imread('aneesh.jpeg', 0)
 
 for x in range(0, len(img)):
     for y in range(0, len(img[0])):
@@ -30,12 +30,12 @@ for x in range(0, len(img)):
         left          = get_pixel_else_0(img, x-1, y )
         bottom_left   = get_pixel_else_0(img, x-1, y+1)
         bottom_right  = get_pixel_else_0(img, x+1, y+1)
-        bottom_down   = get_pixel_else_0(img, x+1, y )
+        bottom_down   = get_pixel_else_0(img, x,   y+1 )
 
-        values = thresholded(center, [top_left, top_up, top_right,
-                                      right, left, bottom_left, bottom_right, bottom_down])
+        values = thresholded(center, [top_left, left, bottom_left,
+                                      top_up, bottom_down, top_right, right, bottom_right])
 
-        weights = [1, 2, 4, 8, 128, 64, 16, 32]
+        weights = [1, 2, 4, 8, 16, 32, 64, 128]
         res = 0
         for a in range(0, len(values)):
             res += weights[a] * values[a]
