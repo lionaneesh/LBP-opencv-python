@@ -32,8 +32,9 @@ for x in range(0, len(img)):
         bottom_right  = get_pixel_else_0(img, x+1, y+1)
         bottom_down   = get_pixel_else_0(img, x,   y+1 )
 
-        values = thresholded(center, [top_left, left, bottom_left,
-                                      top_up, bottom_down, top_right, right, bottom_right])
+        values = thresholded(center, [top_up, top_right, right, bottom_right,
+                                      bottom_down, bottom_left, left,
+                                      top_left])
 
         weights = [1, 2, 4, 8, 16, 32, 64, 128]
         res = 0
