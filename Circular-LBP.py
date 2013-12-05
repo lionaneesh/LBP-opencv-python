@@ -38,7 +38,7 @@ for x in range(0, len(img)):
     for y in range(0, len(img[0])):
         center        = img[x,y]
         pixels = []
-        for point in range(1, P + 1):
+        for point in range(0, P):
             r = x + R * math.cos(2 * math.pi * point / P)
             c = y - R * math.sin(2 * math.pi * point / P)
             if r < 0 or c < 0:
@@ -69,7 +69,7 @@ for x in range(0, len(img)):
         values = thresholded(center, pixels)
         res = 0
         for a in range(0, len(values)):
-            res += values[a] * 2 ** a
+            res += values[a] * (2 ** a)
 
         transformed_img.itemset((x,y), res)
 
